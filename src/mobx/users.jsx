@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { runInAction } from "mobx";
 import Loader from "../utils/Loader";
 
-export default observer(function MComponent({ store }) {
+export const MComponent = observer(({ store }) => {
   const [load, setLoad] = useState(true);
 
   useEffect(() => {
@@ -12,6 +12,7 @@ export default observer(function MComponent({ store }) {
     setLoad(false);
   }, [store]);
 
+  console.log("Mcpt");
   return <>{load ? <Loader /> : <MUsers data={store.users} />}</>;
 });
 

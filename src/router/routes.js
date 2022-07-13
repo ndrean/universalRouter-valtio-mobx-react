@@ -1,7 +1,6 @@
 import React, { Suspense, lazy } from "react";
 import Loader from "../utils/Loader";
-
-const Users = lazy(() => import("../utils/users"));
+import { runInAction } from "mobx";
 
 const routes = [
   {
@@ -39,10 +38,10 @@ const routes = [
       },
       {
         path: "/vusers2",
-        async action() {
+        async action({ vStore }) {
           const { VComponentAfter } = await import("../valtio/users");
 
-          return <VComponentAfter />;
+          return <VComponentAfter store={vStore} />;
         }
       },
       {
@@ -54,17 +53,25 @@ const routes = [
         }
       },
       {
-        path: "/musers",
+        path: "/musers1",
         async action({ mStore }) {
-          await mStore.fetchUsers(6);
-          //const { Users } = await import("../utils/user");
-          return (
+          await runInAction(() => mStore.fetchUsers(6));
+          const { MUsers } = await import("../utils/users");
+          return runInAction(() => (
             <Suspense fallback={Loader()}>
-              <Users data={mStore.users} />;
+              <MUsers data={mStore.users} />;
             </Suspense>
-          );
+          ));
         }
       },
+      {
+        path: "/musers2",
+        async action({ mStore }) {
+          const { MComponent } = await import("../mobx/users");
+          return <MComponent store={mStore} />;
+        }
+      },
+
       {
         path: "(.*)",
         action: () => <h1>404...</h1>

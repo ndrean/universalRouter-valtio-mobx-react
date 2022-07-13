@@ -3,10 +3,17 @@ import React from "react";
 
 import UniversalRouter from "universal-router";
 import history from "./router/history";
-//import { configure } from "mobx";
+import { configure } from "mobx";
 import routes from "./router/routes";
 import { mStore } from "./mobx/mStore";
 import { vStore } from "./valtio/vStore";
+
+configure({
+  enforceActions: "observed",
+  computedRequiresReaction: true,
+  reactionRequiresObservable: true,
+  observableRequiresReaction: true
+});
 
 const context = { mStore, vStore };
 
@@ -20,10 +27,11 @@ async function renderRoute(location) {
       pathname: location.pathname
     });
 
-    if (page.redirect) {
-      return history.push({ pathname: page.redirect, search: "" });
-    }
-    return root.render(<React.StrictMode>{page}</React.StrictMode>);
+    //if (page.redirect) {
+    //  return history.push({ pathname: page.redirect, search: "" });
+    //}
+    //return root.render(<React.StrictMode>{page}</React.StrictMode>);
+    return root.render(<>{page}</>);
   } catch (err) {
     console.log(err);
     //return root.render(<p>Wrong!</p>);
