@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { fetchComments } from "../utils/fetchUsers";
-import { Users } from "../utils/users";
+import Users from "../utils/users";
 import Loader from "../utils/Loader";
 
 export default function RComponent() {
@@ -9,10 +9,11 @@ export default function RComponent() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchComments(4).then((data) => setUsers(<Users data={data} />));
-    setLoading(false);
+    fetchComments(4)
+      .then((data) => setUsers(<Users data={data} />))
+      .then(() => setLoading(false));
   }, []);
 
-  console.log("react users");
+  console.log("R users");
   return <>{loading ? <Loader /> : <div>{users}</div>}</>;
 }

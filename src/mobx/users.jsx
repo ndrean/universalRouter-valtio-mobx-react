@@ -4,25 +4,21 @@ import { observer } from "mobx-react-lite";
 import { runInAction } from "mobx";
 import Loader from "../utils/Loader";
 
-export const MComponent = observer(({ store }) => {
-  const [load, setLoad] = useState(true);
-
+export const MComponent = observer(function MComponent({ store }) {
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    runInAction(() => store.fetchUsers(6));
-    setLoad(false);
+    runInAction(() => store.fetchUsers(7)).then(() => setLoading(false));
   }, [store]);
 
   console.log("Mcpt");
-  return <>{load ? <Loader /> : <MUsers data={store.users} />}</>;
+  return <>{loading ? <Loader /> : <MUsers data={store.users} />}</>;
 });
 
-const MUsers = observer(({ data }) => (
-  <>
-    {data &&
-      runInAction(() =>
-        data.map((user) => <MUser key={user.id} user={user} />)
-      )}
-  </>
-));
+export const MUsers = observer(function MUsers({ data }) {
+  console.log("Musers");
+  return <>{data && data.map((user) => <MUser key={user.id} user={user} />)}</>;
+});
 
-const MUser = observer(({ user }) => <p>{user.email}</p>);
+export const MUser = observer(function MUser({ user }) {
+  return <p>{user.email}</p>;
+});

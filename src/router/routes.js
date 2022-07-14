@@ -1,6 +1,6 @@
-import React, { Suspense, lazy } from "react";
-import Loader from "../utils/Loader";
+import React, { Suspense } from "react";
 import { runInAction } from "mobx";
+import { fetchComments } from "../utils/fetchUsers";
 
 const routes = [
   {
@@ -8,13 +8,8 @@ const routes = [
     path: "",
     action: async ({ next }) => {
       const content = await next();
-      if (content.redirect) {
-        return content;
-      }
-      //console.log("content router", content);
-      return import("./NavBar").then(({ default: NavBar }) => (
-        <NavBar>{content}</NavBar>
-      ));
+      const { default: NavBar } = await import("./NavBar");
+      return content && <NavBar>{content}</NavBar>;
     },
     children: [
       {
@@ -23,32 +18,30 @@ const routes = [
           import("../utils/Home").then(({ default: Home }) => <Home />)
       },
       {
-        path: "/vusers1",
-        async action({ vStore }) {
-          await vStore.getUsers(2);
-          const { Users } = await import("../utils/users");
-          //const {Users} = lazy(() => import("../utils/users"));
-          //console.log(Users);
-          return (
-            <Suspense fallback={Loader()}>
-              <Users data={vStore.users} />
-            </Suspense>
-          );
-        }
+        path: "/valtio",
+        children: [
+          {
+            path: "/before",
+            async action({ vStore }) {
+              await vStore.getUsers(2);
+              const { default: Users } = await import("../utils/users");
+              return <Users data={vStore.users} />;
+            }
+          },
+          {
+            path: "/after",
+            async action({ vStore }) {
+              const { default: VComponent } = await import("../valtio/users");
+              return <VComponent store={vStore} />;
+            }
+          }
+        ]
       },
-      {
-        path: "/vusers2",
-        async action({ vStore }) {
-          const { VComponentAfter } = await import("../valtio/users");
 
-          return <VComponentAfter store={vStore} />;
-        }
-      },
       {
         path: "/rusers",
         async action() {
           const { default: RComponent } = await import("../react/users");
-
           return <RComponent />;
         }
       },
@@ -56,12 +49,8 @@ const routes = [
         path: "/musers1",
         async action({ mStore }) {
           await runInAction(() => mStore.fetchUsers(6));
-          const { MUsers } = await import("../utils/users");
-          return runInAction(() => (
-            <Suspense fallback={Loader()}>
-              <MUsers data={mStore.users} />;
-            </Suspense>
-          ));
+          const { MUsers } = await import("../mobx/users");
+          return runInAction(() => <MUsers data={mStore.users} />);
         }
       },
       {
@@ -71,10 +60,18 @@ const routes = [
           return <MComponent store={mStore} />;
         }
       },
-
+      {
+        path: "/users",
+        action: async () => {
+          const users = await fetchComments(8);
+          const { default: Users } = await import("../utils/users");
+          return <Users data={users} />;
+        }
+      },
       {
         path: "(.*)",
-        action: () => <h1>404...</h1>
+        action: () =>
+          import("../utils/Peugeot").then(({ default: Peugeot }) => <Peugeot />)
       }
     ]
   }

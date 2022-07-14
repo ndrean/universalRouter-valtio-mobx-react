@@ -27,14 +27,11 @@ async function renderRoute(location) {
       pathname: location.pathname
     });
 
-    //if (page.redirect) {
-    //  return history.push({ pathname: page.redirect, search: "" });
-    //}
-    //return root.render(<React.StrictMode>{page}</React.StrictMode>);
-    return root.render(<>{page}</>);
+    return root.render(<React.StrictMode>{page}</React.StrictMode>);
+    //return root.render(<>{page}</>);
   } catch (err) {
     console.log(err);
-    //return root.render(<p>Wrong!</p>);
+    return root.render(<p>Wrong!</p>);
   }
 }
 
