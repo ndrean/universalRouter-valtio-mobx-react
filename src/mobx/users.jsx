@@ -7,7 +7,7 @@ import Loader from "../utils/Loader";
 export const MComponent = observer(function MComponent({ store }) {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    runInAction(() => store.fetchUsers(7)).then(() => setLoading(false));
+    runInAction(() => store.fetchUsers(7)).finally(() => setLoading(false));
   }, [store]);
 
   console.log("Mcpt");

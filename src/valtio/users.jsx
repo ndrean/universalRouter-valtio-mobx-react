@@ -9,7 +9,7 @@ export default function VComponent({ store }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    store.getUsers(1).then(() => setLoading(false));
+    store.getUsers(1).finally(() => setLoading(false));
   }, [store]);
 
   console.log("valtio users");

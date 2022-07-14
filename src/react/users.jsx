@@ -11,7 +11,7 @@ export default function RComponent() {
   useEffect(() => {
     fetchComments(4)
       .then((data) => setUsers(<Users data={data} />))
-      .then(() => setLoading(false));
+      .finally(() => setLoading(false));
   }, []);
 
   console.log("R users");
