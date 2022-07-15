@@ -47,11 +47,7 @@ const routes = [
       },
       {
         path: "/musers1",
-        async action({ mStore }) {
-          await runInAction(() => mStore.fetchUsers(6));
-          const { MUsers } = await import("../mobx/users");
-          return runInAction(() => <MUsers data={mStore.users} />);
-        }
+        action: async ({ mStore }) => MBefore(mStore)
       },
       {
         path: "/musers2",
@@ -62,11 +58,7 @@ const routes = [
       },
       {
         path: "/users",
-        action: async () => {
-          const users = await fetchComments(8);
-          const { default: Users } = await import("../utils/users");
-          return <Users data={users} />;
-        }
+        action: async () => PreFectch()
       },
       {
         path: "(.*)",
@@ -76,5 +68,17 @@ const routes = [
     ]
   }
 ];
+
+async function MBefore(store) {
+  await runInAction(() => store.fetchUsers(6));
+  const { MUsers } = await import("../mobx/users");
+  return runInAction(() => <MUsers data={store.users} />);
+}
+
+async function PreFectch() {
+  const users = await fetchComments(8);
+  const { default: Users } = await import("../utils/users");
+  return <Users data={users} />;
+}
 
 export default routes;
