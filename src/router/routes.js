@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { runInAction } from "mobx";
 import { fetchComments } from "../utils/fetchUsers";
 
@@ -22,11 +22,7 @@ const routes = [
         children: [
           {
             path: "/before",
-            async action({ vStore }) {
-              await vStore.getUsers(2);
-              const { default: Users } = await import("../utils/users");
-              return <Users data={vStore.users} />;
-            }
+            action: ({ vStore }) => VBefore(vStore)
           },
           {
             path: "/after",
@@ -79,6 +75,12 @@ async function PreFectch() {
   const users = await fetchComments(8);
   const { default: Users } = await import("../utils/users");
   return <Users data={users} />;
+}
+
+async function VBefore(store) {
+  await store.getUsers(2);
+  const { default: Users } = await import("../utils/users");
+  return <Users data={store.users} />;
 }
 
 export default routes;
